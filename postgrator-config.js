@@ -3,5 +3,5 @@
 module.exports = {
     "migrationDirectory": "migrations",
     "driver": "pg",
-    "connectionString": "postgresql://jordanlopez992@localhost/localized_server",
+    "connectionString": "https://secret-refuge-07838.herokuapp.com",
 }

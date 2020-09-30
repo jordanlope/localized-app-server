@@ -1,6 +1,6 @@
 BEGIN;
 
-INSERT INTO business (id, name, description, typeofbusiness)
+INSERT INTO business (id, name, decription, typeofbusiness)
 
 VALUES
     (1, 'Venmo', 'Transfer all of your money virtually', 'finance'),
