@@ -1,42 +1,63 @@
 const express = require('express')
 const xss = require('xss')
 const BusinessService = require('./businesses-service')
-
+const UserService = require('../auth/auth-service')
+const { hasUserWithUserName, hashPassword } = require('../auth/auth-service')
+const UsersService = require('../auth/auth-service')
 const businessesRouter = express.Router()
 const jsonParser = express.json()
 
 businessesRouter
     .route('/')
     .get((req, res, next) => {
-
         BusinessService.getAllBusinesses(req.app.get('db'))
         .then(businesses => {
             res.json(businesses)
         }).catch(next)
-
     })
     .post(jsonParser, (req, res, next) => {
-        const { name, description, typeofbusiness } = req.body
+        const { name, description, typeofbusiness, username, password } = req.body
 
-        const newBusiness = {
-            name: xss(name), 
-            description: xss(description), 
-            typeofbusiness, 
-        }
+        for (const field of ['name', 'description', 'typeofbusiness', 'username', 'password'])
+        if (!req.body[field])
+          return res.status(400).json({
+            error: `Missing '${field}' in request body`
+          })
 
-        for (const [key, value] of Object.entries(newBusiness))
-            if(value == null)
-                return res.status(400).json({
-                    error: { message: `Missing '${key}' in request body` }
+        UserService.hasUserWithUserName(
+            req.app.get('db'),
+            username
+        ).then(hasUserWithUserName => {
+            if(hasUserWithUserName) 
+                return res.status(400).json({ error: 'Username already taken' })
+
+            const checkPassword = UserService.validatePassword(password)
+            if(checkPassword)
+                return res.status(401).json({ error: 'Password invalid' })
+            
+            return UserService.hashPassword(password)
+                .then(hashedPassword => {
+                    const newBusiness = {
+                        name: xss(name),
+                        description: xss(description), 
+                        typeofbusiness, 
+                        username: xss(username),
+                        password: hashedPassword,
+                    }
+                    console.log('Hashed', hashedPassword)
+                    return UserService.insertUser(
+                        req.app.get('db'),
+                        newBusiness
+                    ).then(user => 
+                        res
+                            .status(201)
+                            // .location(path.posix.join(req.originalUrl, `/${user.id}`))
+                            .json(UserService.serializeUser(user))
+                    )
+                    console.log('Finished')
                 })
-
-        BusinessService.insertBusiness(req.app.get('db'), newBusiness).then(business => {
-            res.send(business)
-        }).then(business => {
-            res
-                .status(201)
-                .json(business)
-        }).catch(next)
+        })
+        .catch(next)
     })
 
 businessesRouter
