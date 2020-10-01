@@ -53,6 +53,14 @@ const UsersService = {
             typeofbusiness: user.typeofbusiness
         }
     },
+    getUserWithUserName(db, username) {
+        return db('business')
+          .where({ username })
+          .first()
+    },
+    comparePasswords(password, hash) { 
+        return bcrypt.compare(password, hash)
+    },
 }
 
 module.exports = UsersService
