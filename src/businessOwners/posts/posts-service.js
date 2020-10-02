@@ -28,6 +28,11 @@ const PostService = {
         .first()
     },
 
+    getAllPostsWithId(db, id) {
+        return PostService.getAllPosts(db)
+        .where({ id }, id)
+    },
+
     deletePost(db, id) { // Delete house works well on Postman
         return db.from('post')
             .where({ id })

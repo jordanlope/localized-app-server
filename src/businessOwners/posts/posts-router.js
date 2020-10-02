@@ -40,6 +40,16 @@ postRouter
     })
 
 postRouter
+    .route('/all/:postId')
+    .get((req, res, next) => {
+        PostService.getAllPostsWithId(req.app.get('db'), req.params.postId)
+            .then(posts => {
+                res.json(posts)
+            })
+            .catch(next)
+    })
+    
+postRouter
     .route('/:postId')
     .all((req, res, next) => {
         PostService.getById(
