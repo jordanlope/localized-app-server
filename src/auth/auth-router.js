@@ -31,8 +31,17 @@ authRouter
               return res.status(400).json({
                 error: 'Incorrect user_name or password',
               })
+            console.log(dbUser.id)
+            const id = `${dbUser.id}`
+            const token = AuthService.createJwt(id, {
+                businessId: dbUser.id,
+                name: dbUser.name,
+                typeOfBusiness: dbUser.typeofbusiness,
+                description: dbUser.description
+            })
 
             res.send({
+                token,
                 businessId: dbUser.id,
                 name: dbUser.name,
                 typeOfBusiness: dbUser.typeofbusiness,

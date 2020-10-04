@@ -34,7 +34,7 @@ businessesRouter
             const checkPassword = UserService.validatePassword(password)
             if(checkPassword)
                 return res.status(401).json({ error: 'Password invalid' })
-            
+
             return UserService.hashPassword(password)
                 .then(hashedPassword => {
                     const newBusiness = {
@@ -54,7 +54,6 @@ businessesRouter
                             // .location(path.posix.join(req.originalUrl, `/${user.id}`))
                             .json(UserService.serializeUser(user))
                     )
-                    console.log('Finished')
                 })
         })
         .catch(next)
