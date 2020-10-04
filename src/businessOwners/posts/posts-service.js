@@ -30,7 +30,7 @@ const PostService = {
 
     getAllPostsWithId(db, id) {
         return PostService.getAllPosts(db)
-        .where( id === id)
+        .where('post.businessid', id)
     },
 
     deletePost(db, id) { // Delete house works well on Postman

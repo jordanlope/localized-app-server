@@ -40,10 +40,10 @@ postRouter
     })
 
 postRouter
-    .route('/all/:postId')
+    .route('/all/:userId')
     .get((req, res, next) => {
-        console.log(req.params.postId)
-        PostService.getAllPostsWithId(req.app.get('db'), req.params.postId)
+        console.log(req.params.userId)
+        PostService.getAllPostsWithId(req.app.get('db'), req.params.userId)
             .then(posts => {
                 console.log(posts)
                 res.json(posts)
